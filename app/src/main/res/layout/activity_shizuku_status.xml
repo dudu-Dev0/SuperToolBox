@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.ShizukuStatusActivity">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/shizuku_status_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:textStyle="bold"/>
+
+        <ImageView
+                android:id="@+id/shizuku_status_img"
+                android:layout_width="120dp"
+                android:layout_height="120dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/is_shizuku_can_use_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"/>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/request_shizuku_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="申请Shizuku"/>
+    </LinearLayout>
+</ScrollView>
