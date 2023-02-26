@@ -78,4 +78,7 @@
         </LinearLayout>
     </FrameLayout>
     <!--以上为标题-->
+    <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
 </LinearLayout>

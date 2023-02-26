@@ -5,6 +5,7 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -18,8 +19,8 @@ import rikka.shizuku.Shizuku
 import rikka.shizuku.Shizuku.UserServiceArgs
 
 
-class MainActivity : AppCompatActivity(),Shizuku.OnRequestPermissionResultListener {
-    companion object{
+class MainActivity : AppCompatActivity(), Shizuku.OnRequestPermissionResultListener {
+    companion object {
         private val userServiceArgs = UserServiceArgs(
             ComponentName(
                 BuildConfig.APPLICATION_ID,
@@ -31,7 +32,8 @@ class MainActivity : AppCompatActivity(),Shizuku.OnRequestPermissionResultListen
             .debuggable(BuildConfig.DEBUG)
             .version(BuildConfig.VERSION_CODE)
     }
-    lateinit var userService:IUserService
+
+    lateinit var userService: IUserService
     private val userServiceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, binder: IBinder?) {
             if (binder != null && binder.pingBinder()) {
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity(),Shizuku.OnRequestPermissionResultListen
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
-            makeToast("Shizuku服务连接失败")
+
         }
     }
 
@@ -57,14 +59,14 @@ class MainActivity : AppCompatActivity(),Shizuku.OnRequestPermissionResultListen
       }
      */
     private fun bindUserService() {
-        val res = java.lang.StringBuilder()
-        try {
-            Shizuku.bindUserService(userServiceArgs, userServiceConnection)
-        } catch (tr: Throwable) {
-            tr.printStackTrace()
-            res.append(tr.toString())
-            makeToast(res.toString())
-        }
+        //val res = java.lang.StringBuilder()
+        //try {
+        Shizuku.bindUserService(userServiceArgs, userServiceConnection)
+        //} catch (tr: Throwable) {
+        //tr.printStackTrace()
+        //res.append(tr.toString())
+        //makeToast(res.toString())
+        //}
     }
 
     lateinit var ShizukuActivated: LinearLayout
@@ -72,17 +74,22 @@ class MainActivity : AppCompatActivity(),Shizuku.OnRequestPermissionResultListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        try {
+            Shizuku.addRequestPermissionResultListener(this)
+            //Shizuku.addBinderReceivedListener(BINDER_RECEIVED_LISTENER)
+            //Shizuku.addBinderDeadListener(BINDER_DEAD_LISTENER)
 
-        Shizuku.addRequestPermissionResultListener(this)
-        //Shizuku.addBinderReceivedListener(BINDER_RECEIVED_LISTENER)
-        //Shizuku.addBinderDeadListener(BINDER_DEAD_LISTENER)
-
-        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
-            bindUserService()
-        } else {
-            Shizuku.requestPermission(114514)
+            if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+                bindUserService()
+            } else {
+                Shizuku.requestPermission(114514)
+            }
+            initView()
+        } catch (e: IllegalStateException) {
+            Log.e("", "无法连接至shizuku服务")
+            makeToast("无法连接至shizuku服务")
         }
-        initView()
+
 
     }
 
@@ -123,7 +130,15 @@ class MainActivity : AppCompatActivity(),Shizuku.OnRequestPermissionResultListen
 
     override fun onResume() {
         super.onResume()
-        checkShizukuPermission()
+        try {
+            checkShizukuPermission()
+        } catch (e: IllegalStateException) {
+            Log.e("", "无法连接至shizuku服务")
+            makeToast("无法连接至shizuku服务")
+            StartActivity<CantConnectToShizukuActivity> { }
+            finish()
+        }
+
     }
 
 }
